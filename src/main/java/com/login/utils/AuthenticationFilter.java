@@ -22,6 +22,7 @@ public class AuthenticationFilter implements Filter {
         log.info(request.getRequestURI());
         if(request.getRequestURI().equals("/api/login")){
             filterChain.doFilter(servletRequest,servletResponse);
+            return;
         }
         String header = request.getHeader(Constants.AUTHORIZATION);
         if (header == null) {
