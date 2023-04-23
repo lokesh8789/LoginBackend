@@ -11,4 +11,6 @@ public interface UserRepo extends JpaRepository<User,Integer> {
     User findByMobile(String mobile);
     List<User> findByNameContaining(String name);
     List<User> findByAddressPinCode(Integer pinCode);
+    @Query("select id from User where email= :email and password = :password")
+    Integer findIdByEmailAndPassword(String email,String password);
 }
