@@ -1,23 +1,29 @@
 package com.login.controller;
 
 import com.login.dto.UserDto;
+import com.login.security.JwtTokenHelper;
 import com.login.service.UserService;
 
 import com.login.utils.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin
+@Slf4j
 public class UserController {
     @Autowired
     UserService userService;
+
+    @Autowired
+    JwtTokenHelper jwtTokenHelper;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody UserDto userDto){
@@ -28,11 +34,17 @@ public class UserController {
         return new ResponseEntity<>(new ApiResponse("Something Went Wrong", false), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @GetMapping("/")
-    public ResponseEntity<List<UserDto>> getAllUsers(){
+    public ResponseEntity<List<UserDto>> getAllUsers(HttpServletRequest request){
+        log.info("Get all API Triggered");
+        Integer id = jwtTokenHelper.getUserIdFromToken(request);
+        log.info("User Id is- "+id);
         return new ResponseEntity<>(userService.getAllUsers(),HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Integer id){
+    public ResponseEntity<UserDto> getUserById(@PathVariable Integer id,HttpServletRequest request){
+        log.info("Get User By Id API Triggered");
+        Integer userId = jwtTokenHelper.getUserIdFromToken(request);
+        log.info("User Id is- "+userId);
         return new ResponseEntity<>(userService.getUserById(id),HttpStatus.OK);
     }
     @GetMapping(value = "/",params = "email")

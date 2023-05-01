@@ -1,15 +1,22 @@
 package com.login.exceptions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.persistence.NonUniqueResultException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -50,4 +57,19 @@ public class GlobalExceptionHandler {
         });
         return new ResponseEntity<Map<String,String>>(resp, HttpStatus.BAD_REQUEST);
     }
+//    @ExceptionHandler(AuthenticationException.class)
+//    public void handleAuthenticationException(AuthenticationException authException, HttpServletResponse response, HttpServletRequest request) throws IOException {
+//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//
+//        final Map<String, Object> body = new LinkedHashMap<>();
+//        body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+//        body.put("error", "Unauthorized");
+//        body.put("message", authException.getMessage());
+//        body.put("path", request.getServletPath());
+//
+//        final ObjectMapper mapper = new ObjectMapper();
+//        mapper.writeValue(response.getOutputStream(), body);
+//        log.info("Sended error");
+//    }
 }
