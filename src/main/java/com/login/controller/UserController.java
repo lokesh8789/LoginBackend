@@ -2,6 +2,7 @@ package com.login.controller;
 
 import com.login.dto.UserDto;
 import com.login.security.JwtTokenHelper;
+import com.login.service.SMSService;
 import com.login.service.UserService;
 
 import com.login.utils.ApiResponse;
@@ -24,6 +25,8 @@ public class UserController {
 
     @Autowired
     JwtTokenHelper jwtTokenHelper;
+    @Autowired
+    SMSService smsService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody UserDto userDto){
@@ -70,5 +73,10 @@ public class UserController {
     @GetMapping("/address")
     public ResponseEntity<List<UserDto>> getUserUsingPinCode(@RequestParam Integer pinCode){
         return new ResponseEntity<>(userService.getUserUsingPinCode(pinCode),HttpStatus.OK);
+    }
+    @PostMapping("/sendSMS")
+    public ResponseEntity<?> sendSMS(@RequestParam("mob") String mob,@RequestParam("msg") String msg){
+        log.info("sendSMS API Triggered");
+        return new ResponseEntity<>(smsService.sendSMS(mob,msg),HttpStatus.OK);
     }
 }
