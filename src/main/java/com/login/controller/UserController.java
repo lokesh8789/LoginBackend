@@ -2,18 +2,18 @@ package com.login.controller;
 
 import com.login.dto.UserDto;
 import com.login.security.JwtTokenHelper;
-import com.login.service.SMSService;
 import com.login.service.UserService;
 
 import com.login.utils.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -25,11 +25,9 @@ public class UserController {
 
     @Autowired
     JwtTokenHelper jwtTokenHelper;
-    @Autowired
-    SMSService smsService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody UserDto userDto){
+    public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody UserDto userDto) {
         boolean success = userService.registerUser(userDto);
         if(success){
             return new ResponseEntity<>(new ApiResponse("User Registered Successfully", true),HttpStatus.CREATED);
@@ -54,10 +52,7 @@ public class UserController {
     public ResponseEntity<UserDto> getUserByEmail(@RequestParam String email){
         return new ResponseEntity<>(userService.findByEmail(email),HttpStatus.OK);
     }
-    @GetMapping(params = "mobile")
-    public ResponseEntity<UserDto> getUserByMobile(@RequestParam("mobile") String mobile){
-        return new ResponseEntity<>(userService.findByMobile(mobile),HttpStatus.OK);
-    }
+
     @GetMapping
     public ResponseEntity<List<UserDto>> getByNameKeyword(@RequestParam String name){
         return new ResponseEntity<>(userService.findByNameContaining(name),HttpStatus.OK);
@@ -69,14 +64,5 @@ public class UserController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<UserDto> deleteUser(@PathVariable Integer id){
         return new ResponseEntity<>(userService.deleteUser(id),HttpStatus.OK);
-    }
-    @GetMapping("/address")
-    public ResponseEntity<List<UserDto>> getUserUsingPinCode(@RequestParam Integer pinCode){
-        return new ResponseEntity<>(userService.getUserUsingPinCode(pinCode),HttpStatus.OK);
-    }
-    @PostMapping("/sendSMS")
-    public ResponseEntity<?> sendSMS(@RequestParam("mob") String mob,@RequestParam("msg") String msg){
-        log.info("sendSMS API Triggered");
-        return new ResponseEntity<>(smsService.sendSMS(mob,msg),HttpStatus.OK);
     }
 }

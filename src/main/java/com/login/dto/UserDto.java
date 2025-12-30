@@ -1,16 +1,13 @@
 package com.login.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.login.entities.Address;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
 
 @Getter
 @Setter
@@ -33,8 +30,4 @@ public class UserDto {
     @NotBlank
     @Size(min = 4,message = "Password must have more than 4 letters")
     private String password;
-    @NotNull
-    @Valid
-    @JsonManagedReference
-    private AddressDto address;
 }

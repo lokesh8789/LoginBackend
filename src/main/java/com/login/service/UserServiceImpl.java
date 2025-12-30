@@ -34,15 +34,13 @@ public class UserServiceImpl implements UserService{
     @Override
     public List<UserDto> getAllUsers() {
         List<User> users = userRepo.findAll();
-        List<UserDto> userDtos = users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
-        return userDtos;
+        return users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
     }
 
     @Override
     public UserDto getUserById(Integer id) {
         User user = userRepo.findById(id).orElseThrow(()->new UserDoesNotExistException("User does not exist"));
-        UserDto userDto = modelMapper.map(user, UserDto.class);
-        return userDto;
+        return modelMapper.map(user, UserDto.class);
     }
 
     @Override
@@ -55,22 +53,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDto findByMobile(String mobile) {
-        User user = userRepo.findByMobile(mobile);
-        if(user==null){
-            throw new UserDoesNotExistException("User Does Not Exist");
-        }
-        return modelMapper.map(user,UserDto.class);
-    }
-
-    @Override
     public List<UserDto> findByNameContaining(String name) {
         List<User> users = userRepo.findByNameContaining(name);
-        if (users == null || users.size()==0) {
+        if (users == null || users.isEmpty()) {
             throw new UserDoesNotExistException("User Does Not Exist");
         }
-        List<UserDto> userDtos = users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
-        return userDtos;
+        return users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
     }
 
     @Override
@@ -85,18 +73,8 @@ public class UserServiceImpl implements UserService{
         User user = userRepo.findById(id).orElseThrow(()->new UserDoesNotExistException("User Does Not Exist"));
         user.setEmail(userDto.getEmail());
         user.setName(userDto.getName());
-        user.setMobile(userDto.getMobile());
         user.setPassword(userDto.getPassword());
         User save = userRepo.save(user);
         return modelMapper.map(save,UserDto.class);
-    }
-
-    @Override
-    public List<UserDto> getUserUsingPinCode(Integer pinCode) {
-        List<User> users = userRepo.findByAddressPinCode(pinCode);
-        if (users == null || users.size()==0) {
-            throw new UserDoesNotExistException("User Does Not Exist");
-        }
-        return users.stream().map(user -> modelMapper.map(user,UserDto.class)).collect(Collectors.toList());
     }
 }

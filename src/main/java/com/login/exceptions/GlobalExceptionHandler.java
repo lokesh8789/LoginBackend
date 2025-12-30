@@ -1,50 +1,45 @@
 package com.login.exceptions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.login.utils.ApiResponse;
+import jakarta.persistence.NonUniqueResultException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.persistence.NonUniqueResultException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse> handleNotKnownTypeException(Exception ex){
-        return new ResponseEntity<>(new ExceptionResponse(ex.getMessage(),false),HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiResponse> handleNotKnownTypeException(Exception ex){
+        return new ResponseEntity<>(new ApiResponse(ex.getMessage(),false),HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleResourceNotFoundException(ResourceNotFoundException ex){
-        return new ResponseEntity<>(new ExceptionResponse(ex.getMessage(),false),HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiResponse> handleResourceNotFoundException(ResourceNotFoundException ex){
+        return new ResponseEntity<>(new ApiResponse(ex.getMessage(),false),HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(UserExistException.class)
-    public ResponseEntity<ExceptionResponse> handleUserAlreadyExistException(UserExistException ex){
-        return new ResponseEntity<>(new ExceptionResponse(ex.getMessage(),false),HttpStatus.CONFLICT);
+    public ResponseEntity<ApiResponse> handleUserAlreadyExistException(UserExistException ex){
+        return new ResponseEntity<>(new ApiResponse(ex.getMessage(),false),HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UserDoesNotExistException.class)
-    public ResponseEntity<ExceptionResponse> handleUserDoesNotExistException(UserDoesNotExistException ex){
-        return new ResponseEntity<>(new ExceptionResponse(ex.getMessage(), false),HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiResponse> handleUserDoesNotExistException(UserDoesNotExistException ex){
+        return new ResponseEntity<>(new ApiResponse(ex.getMessage(), false),HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(NonUniqueResultException.class)
-    public ResponseEntity<ExceptionResponse> handleNonUniqueResultException(NonUniqueResultException ex){
-        return new ResponseEntity<>(new ExceptionResponse("Contains Multiple Results",false),HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponse> handleNonUniqueResultException(NonUniqueResultException ex){
+        return new ResponseEntity<>(new ApiResponse("Contains Multiple Results",false),HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
-    public ResponseEntity<ExceptionResponse> handleIncorrectResultSizeDataAccessException(IncorrectResultSizeDataAccessException ex){
-        return new ResponseEntity<>(new ExceptionResponse("Contains Multiple Results",false),HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponse> handleIncorrectResultSizeDataAccessException(IncorrectResultSizeDataAccessException ex){
+        return new ResponseEntity<>(new ApiResponse("Contains Multiple Results",false),HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String,String>> handleMethodArgsNotValidException(MethodArgumentNotValidException ex)

@@ -1,8 +1,8 @@
 package com.login.entities;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 
 @Entity
 @Table(name="users")
@@ -16,8 +16,5 @@ public class User {
     private Integer id;
     private String name;
     private String email;
-    private String mobile;
     private String password;
-    @OneToOne(cascade = CascadeType.ALL,mappedBy = "user")
-    private Address address;
 }

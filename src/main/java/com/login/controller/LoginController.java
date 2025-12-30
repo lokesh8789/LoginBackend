@@ -4,9 +4,9 @@ import com.login.dto.LoginDto;
 import com.login.dto.UserDto;
 import com.login.security.JwtAuthResponse;
 import com.login.security.JwtTokenHelper;
-import com.login.service.ChatGPTService;
 import com.login.service.UserService;
 import com.login.utils.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -20,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -36,8 +35,7 @@ public class LoginController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private Environment env;
-    @Autowired
-    private ChatGPTService chatGPTService;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto){
         log.info("Login API Triggered");
@@ -57,18 +55,5 @@ public class LoginController {
         log.info("Token Generated");
         Date expiration = jwtTokenHelper.getExpirationDateFromToken(token);
         return new ResponseEntity<>(new JwtAuthResponse(user,token,new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(expiration)),HttpStatus.OK);
-    }
-    @GetMapping("/getAIResponse")
-    public ResponseEntity<?> getChatGPTResponse(@RequestParam String message){
-        log.info("ChatGPT Request API Called For Request: "+message);
-        String key = env.getProperty("OPENAI_API_KEY");
-        log.info("Key is: "+key);
-        String response = chatGPTService.sendRequest(message,key);
-        if(response.equalsIgnoreCase("Exception") || response.equalsIgnoreCase("error")
-                || response.contains("invalid_request_error")) {
-            return new ResponseEntity<>("Exception Occurred!!",HttpStatus.INTERNAL_SERVER_ERROR);
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }
     }
 }
