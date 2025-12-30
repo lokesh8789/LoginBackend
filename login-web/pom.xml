@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.login</groupId>
-	<artifactId>Login</artifactId>
+	<artifactId>login-web</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Login</name>
+	<name>login-web</name>
 	<description>Login System</description>
 	<properties>
 		<java.version>21</java.version>
