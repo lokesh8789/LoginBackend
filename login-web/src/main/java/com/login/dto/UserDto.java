@@ -23,8 +23,6 @@ public class UserDto {
     @Email(message = "Email format not valid")
     @NotEmpty
     private String email;
-    @Pattern(regexp = "^\\d{10}$", message = "Must Contain 10 Digits")
-    private String mobile;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Getter(onMethod_ = @JsonIgnore)
     @NotBlank
