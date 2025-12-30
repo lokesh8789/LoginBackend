@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface UserRepo extends JpaRepository<User,Integer> {
+public interface UserRepo extends JpaRepository<User, Integer> {
     User findByEmail(String email);
+
     List<User> findByNameContaining(String name);
+
     @Query("select id from User where email= :email and password = :password")
-    Integer findIdByEmailAndPassword(String email,String password);
+    Integer findIdByEmailAndPassword(String email, String password);
 }

@@ -12,14 +12,14 @@ import java.io.IOException;
 
 @Component
 @Slf4j
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint{
-//    @Autowired
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    //    @Autowired
 //    @Qualifier("handlerExceptionResolver")
 //    private HandlerExceptionResolver handlerExceptionResolver;
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         log.info("Sending UnAuthorized Error");
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Access Denied !!");
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied !!");
         //handlerExceptionResolver.resolveException(request,response,null,authException);
     }
 }

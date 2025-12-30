@@ -38,13 +38,11 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        log.info("Calling authentication manager");
         return configuration.getAuthenticationManager();
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("configuring http url pattern");
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
@@ -53,21 +51,18 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(filterExceptionHandler,CorsFilter.class);
-        log.info("after add filter before");
+        http.addFilterBefore(filterExceptionHandler, CorsFilter.class);
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        log.info("calling password encoder");
+    public PasswordEncoder passwordEncoder() {
         //return new MessageDigestPasswordEncoder("MD5");
         return new BCryptPasswordEncoder(12);
     }
 
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
-        log.info("Creating CORS configuration source");
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");

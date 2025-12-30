@@ -37,23 +37,21 @@ public class LoginController {
     private Environment env;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto){
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
         log.info("Login API Triggered");
-        Authentication authentication=null;
+        Authentication authentication = null;
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserName(), loginDto.getPassword()));
-        } catch (AuthenticationException e){
+        } catch (AuthenticationException e) {
             log.info("Error in user authentication");
-            return new ResponseEntity<>(new ApiResponse("User Not Authorized. Possibly Bad Credentials",false),HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new ApiResponse("User Not Authorized. Possibly Bad Credentials", false), HttpStatus.UNAUTHORIZED);
         }
-        log.info("Authentication Object Created");
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         UserDto user = userService.findByEmail(userDetails.getUsername());
         String token = jwtTokenHelper.generateToken(userDetails.getUsername(), user.getId().toString());
-        log.info("Token Generated");
         Date expiration = jwtTokenHelper.getExpirationDateFromToken(token);
-        return new ResponseEntity<>(new JwtAuthResponse(user,token,new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(expiration)),HttpStatus.OK);
+        return new ResponseEntity<>(new JwtAuthResponse(user, token, new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(expiration)), HttpStatus.OK);
     }
 }

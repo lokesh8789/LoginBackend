@@ -10,25 +10,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     @Autowired
     public ModelMapper modelMapper;
     @Autowired
     public UserRepo userRepo;
+
     @Override
-    public boolean registerUser(UserDto userDto){
-        String email=userDto.getEmail();
-        if (userRepo.findByEmail(email)!=null) {
-            throw new UserExistException("User with emailId- "+email+" already exist");
+    public boolean registerUser(UserDto userDto) {
+        String email = userDto.getEmail();
+        if (userRepo.findByEmail(email) != null) {
+            throw new UserExistException("User with emailId- " + email + " already exist");
         }
         User user = modelMapper.map(userDto, User.class);
-        //user.getAddress().setUser(user);
-        User save = userRepo.save(user);
-        return save != null;
+        try {
+            userRepo.save(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -39,17 +42,17 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto getUserById(Integer id) {
-        User user = userRepo.findById(id).orElseThrow(()->new UserDoesNotExistException("User does not exist"));
+        User user = userRepo.findById(id).orElseThrow(() -> new UserDoesNotExistException("User does not exist"));
         return modelMapper.map(user, UserDto.class);
     }
 
     @Override
     public UserDto findByEmail(String email) {
         User user = userRepo.findByEmail(email);
-        if(user==null){
+        if (user == null) {
             throw new UserDoesNotExistException("User Does Not Exist");
         }
-        return modelMapper.map(user,UserDto.class);
+        return modelMapper.map(user, UserDto.class);
     }
 
     @Override
@@ -63,18 +66,18 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto deleteUser(Integer id) {
-        User user = userRepo.findById(id).orElseThrow(()->new UserDoesNotExistException("User Does Not Exist"));
+        User user = userRepo.findById(id).orElseThrow(() -> new UserDoesNotExistException("User Does Not Exist"));
         userRepo.delete(user);
-        return modelMapper.map(user,UserDto.class);
+        return modelMapper.map(user, UserDto.class);
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto,Integer id) {
-        User user = userRepo.findById(id).orElseThrow(()->new UserDoesNotExistException("User Does Not Exist"));
+    public UserDto updateUser(UserDto userDto, Integer id) {
+        User user = userRepo.findById(id).orElseThrow(() -> new UserDoesNotExistException("User Does Not Exist"));
         user.setEmail(userDto.getEmail());
         user.setName(userDto.getName());
         user.setPassword(userDto.getPassword());
         User save = userRepo.save(user);
-        return modelMapper.map(save,UserDto.class);
+        return modelMapper.map(save, UserDto.class);
     }
 }

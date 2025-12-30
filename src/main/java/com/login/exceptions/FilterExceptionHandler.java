@@ -18,14 +18,12 @@ public class FilterExceptionHandler extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            log.info("inside filter exception---------------------------");
-            filterChain.doFilter(request,response);
-            log.info("leaving filter exception-----------------------------");
-        } catch (UsernameNotFoundException e){
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,e.getMessage());
+            filterChain.doFilter(request, response);
+        } catch (UsernameNotFoundException e) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, e.getMessage());
             log.info("user not found exception.................");
-        } catch (Exception e){
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,e.getMessage());
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             log.info("error-----------{}", e.getMessage());
         }
     }

@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
 
 @RestController
@@ -29,40 +28,42 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody UserDto userDto) {
         boolean success = userService.registerUser(userDto);
-        if(success){
-            return new ResponseEntity<>(new ApiResponse("User Registered Successfully", true),HttpStatus.CREATED);
+        if (success) {
+            return new ResponseEntity<>(new ApiResponse("User Registered Successfully", true), HttpStatus.CREATED);
         }
         return new ResponseEntity<>(new ApiResponse("Something Went Wrong", false), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @GetMapping("/")
-    public ResponseEntity<List<UserDto>> getAllUsers(HttpServletRequest request){
+    public ResponseEntity<List<UserDto>> getAllUsers(HttpServletRequest request) {
         log.info("Get all API Triggered");
         Integer id = jwtTokenHelper.getUserIdFromToken(request);
-        log.info("User Id is- "+id);
-        return new ResponseEntity<>(userService.getAllUsers(),HttpStatus.OK);
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Integer id,HttpServletRequest request){
+    public ResponseEntity<UserDto> getUserById(@PathVariable Integer id) {
         log.info("Get User By Id API Triggered");
-        Integer userId = jwtTokenHelper.getUserIdFromToken(request);
-        log.info("User Id is- "+userId);
-        return new ResponseEntity<>(userService.getUserById(id),HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
-    @GetMapping(value = "/",params = "email")
-    public ResponseEntity<UserDto> getUserByEmail(@RequestParam String email){
-        return new ResponseEntity<>(userService.findByEmail(email),HttpStatus.OK);
+
+    @GetMapping(value = "/", params = "email")
+    public ResponseEntity<UserDto> getUserByEmail(@RequestParam String email) {
+        return new ResponseEntity<>(userService.findByEmail(email), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getByNameKeyword(@RequestParam String name){
-        return new ResponseEntity<>(userService.findByNameContaining(name),HttpStatus.OK);
+    public ResponseEntity<List<UserDto>> getByNameKeyword(@RequestParam String name) {
+        return new ResponseEntity<>(userService.findByNameContaining(name), HttpStatus.OK);
     }
+
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto,@PathVariable("id") Integer id){
-        return new ResponseEntity<>(userService.updateUser(userDto,id),HttpStatus.OK);
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, @PathVariable("id") Integer id) {
+        return new ResponseEntity<>(userService.updateUser(userDto, id), HttpStatus.OK);
     }
+
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<UserDto> deleteUser(@PathVariable Integer id){
-        return new ResponseEntity<>(userService.deleteUser(id),HttpStatus.OK);
+    public ResponseEntity<UserDto> deleteUser(@PathVariable Integer id) {
+        return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
     }
 }
