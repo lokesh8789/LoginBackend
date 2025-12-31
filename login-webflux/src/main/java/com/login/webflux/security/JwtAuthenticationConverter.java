@@ -10,7 +10,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationConverter implements ServerAuthenticationConverter {
     private final JwtTokenUtil jwtTokenUtil;

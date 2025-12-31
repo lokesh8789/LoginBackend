@@ -1,6 +1,7 @@
 package com.login.webflux.config;
 
 import com.login.webflux.security.JwtAuthenticationFilter;
+import com.login.webflux.security.JwtSecurityContextRepository;
 import com.login.webflux.security.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,8 +30,27 @@ public class SecurityConfig {
 
     private final ServerAuthenticationEntryPoint authenticationEntryPoint;
 
-    //--> AuthenticationConverter(header->unAuth) + AuthenticationManager(unAuth->auth) way to handle Jwt Authentication
+    // --> Security Context Repository Way (header -> authenticated)
     @Bean
+    public SecurityWebFilterChain filterChain(ServerHttpSecurity http,
+                                              JwtSecurityContextRepository securityContextRepository) {
+
+        return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/api/login")
+                        .permitAll()
+                        .anyExchange()
+                        .authenticated()
+                )
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
+                .securityContextRepository(securityContextRepository)
+                .build();
+    }
+
+    //--> AuthenticationConverter(header->unAuth) + AuthenticationManager(unAuth->auth) way to handle Jwt Authentication
+    //--> To Use this, un-comment JwtAuthenticationConverter and JwtAuthenticationManager's @Component part.
+    /*@Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http,
                                               ReactiveAuthenticationManager authenticationManager,
                                               ServerAuthenticationConverter serverAuthenticationConverter) {
@@ -51,7 +71,7 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .build();
-    }
+    }*/
 
 
     //--> Custom JwtAuthenticationFilter Way To Handle Jwt Authentication

@@ -65,11 +65,11 @@ public class JwtTokenUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) {
+    public boolean validateToken(String token, String username) {
         return Optional.ofNullable(token)
                 .filter(t -> !isTokenExpired(t))
                 .map(this::extractUsername)
-                .map(username -> username.equals(userDetails.getUsername()))
+                .map(un -> un.equals(username))
                 .orElse(false);
     }
 

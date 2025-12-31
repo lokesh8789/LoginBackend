@@ -4,15 +4,12 @@ import com.login.webflux.dto.JwtAuthResponse;
 import com.login.webflux.dto.LoginDto;
 import com.login.webflux.dto.UserDto;
 import com.login.webflux.security.JwtTokenUtil;
-import com.login.webflux.security.JwtUser;
 import com.login.webflux.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +27,7 @@ import java.text.SimpleDateFormat;
 @RequiredArgsConstructor
 public class LoginController {
 
-    private final ReactiveUserDetailsService userDetailsService;
+    private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
@@ -38,11 +35,9 @@ public class LoginController {
     @PostMapping("/login")
     public Mono<JwtAuthResponse> login(@Valid @RequestBody LoginDto loginDto) {
         log.info("Received login request: {}", loginDto);
-        return userDetailsService.findByUsername(loginDto.getUserName())
+        return userService.getUserByEmail(loginDto.getUserName())
                 .publishOn(Schedulers.boundedElastic())
                 .filter(ud -> passwordEncoder.matches(loginDto.getPassword(), ud.getPassword()))
-                .cast(JwtUser.class)
-                .map(JwtUser::user)
                 .flatMap(user -> Mono.fromSupplier(() -> jwtTokenUtil.generateToken(user.getEmail()))
                         .map(token -> Tuples.of(user, token)))
                 .map(tuple -> JwtAuthResponse.builder()

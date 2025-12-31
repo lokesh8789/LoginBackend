@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter implements WebFilter {
                 .map(token -> authToken.updateAndGet(s -> token))
                 .map(jwtTokenUtil::extractUsername)
                 .flatMap(userDetailsService::findByUsername)
-                .filter(userDetails -> jwtTokenUtil.validateToken(authToken.get(), userDetails))
+                .filter(userDetails -> jwtTokenUtil.validateToken(authToken.get(), userDetails.getUsername()))
                 .map(ud -> UsernamePasswordAuthenticationToken.authenticated(ud, null, ud.getAuthorities()))
                 .flatMap(auth -> chain.filter(exchange)
                         .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth))

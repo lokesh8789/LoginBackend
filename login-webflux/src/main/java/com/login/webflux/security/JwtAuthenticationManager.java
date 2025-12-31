@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Component
+//@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
     private final JwtTokenUtil jwtTokenUtil;
@@ -21,7 +21,7 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
     public Mono<Authentication> authenticate(Authentication authentication) {
         log.info("Authenticating user {}", authentication.getName());
         return userDetailsService.findByUsername(authentication.getName())
-                .filter(ud -> jwtTokenUtil.validateToken((String) authentication.getCredentials(), ud))
+                .filter(ud -> jwtTokenUtil.validateToken((String) authentication.getCredentials(), ud.getUsername()))
                 .<Authentication>map(ud -> UsernamePasswordAuthenticationToken.authenticated(ud, null, ud.getAuthorities()))
                 .onErrorResume(e -> Mono.empty())
                 .switchIfEmpty(Mono.error(new BadCredentialsException("Access Denied. Unauthorized")));
