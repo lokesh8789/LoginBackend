@@ -1,5 +1,7 @@
 package com.login.webflux.config;
 
+import com.login.webflux.security.JwtAuthenticationFilter;
+import com.login.webflux.security.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +9,7 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -24,13 +27,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final ReactiveAuthenticationManager authenticationManager;
-    private final ServerAuthenticationConverter serverAuthenticationConverter;
     private final ServerAuthenticationEntryPoint authenticationEntryPoint;
 
-
+    //--> AuthenticationConverter(header->unAuth) + AuthenticationManager(unAuth->auth) way to handle Jwt Authentication
     @Bean
-    public SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain filterChain(ServerHttpSecurity http,
+                                              ReactiveAuthenticationManager authenticationManager,
+                                              ServerAuthenticationConverter serverAuthenticationConverter) {
+
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
         authenticationWebFilter.setServerAuthenticationConverter(serverAuthenticationConverter);
 
@@ -48,6 +52,26 @@ public class SecurityConfig {
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .build();
     }
+
+
+    //--> Custom JwtAuthenticationFilter Way To Handle Jwt Authentication
+    /*@Bean
+    public SecurityWebFilterChain filterChain(ServerHttpSecurity http, JwtTokenUtil jwtTokenUtil, ReactiveUserDetailsService userDetailsService) {
+        JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtTokenUtil, userDetailsService);
+
+        return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/api/login")
+                        .permitAll()
+                        .anyExchange()
+                        .authenticated()
+                )
+                .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+                .build();
+    }*/
 
     @Bean
     public PasswordEncoder passwordEncoder() {
